@@ -5,10 +5,11 @@ var db = require("../db");
 
 router.get("/get", (req, res) => {
   db.query(
-    "SELECT *, users.id as id FROM users JOIN companies ON users.companyId=companies.id",
+    "SELECT *, deals.id as id FROM deals JOIN transporters ON users.transporterId=transporters.id",
     function (error, results, fields) {
       if (error) throw error;
-      res.send({ status: 200, result: results });
+      if (results.length > 0) res.send({ status: 200, result: results });
+      else res.send({ status: 404 });
     }
   );
 });
@@ -26,48 +27,60 @@ router.post("/add", (req, res) => {
     dt.getMinutes() +
     ":" +
     dt.getSeconds();
-  var user = {
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
-    email: req.body.email,
-    phone: req.body.phone,
+  console.log(req.body);
+  var deal = {
     companyId: req.body.companyId,
-    type: req.body.type,
+    driverName: req.body.driverName,
+    driverPhone: req.body.driverPhone,
+    truckPlate: req.body.truckPlate,
+    trailerPlate: req.body.trailerPlate,
+    secondPlate: req.body.secondPlate,
+    transporterId: req.body.transporterId,
+    firstWeight: req.body.firstWeight,
+    secondWeight: req.body.secondWeight,
+    netWeight: req.body.netWeight,
+    newNetWeight: req.body.newNetWeight,
+    quantity: req.body.quantity,
+    newQuantity: req.body.newQuantity,
+    alertTime: req.body.alertTime,
+    startDateTime: now,
+    borderNumber: req.body.borderNumber,
+    receiptNumber: req.body.receiptNumber,
+    description: req.body.description,
+    newDescription: req.body.newDescription,
     status: 1,
-    password: req.body.password,
-    created_at: now,
   };
-  console.log(user);
-  var query =
-    "INSERT INTO users (firstname, lastname, email, phone, password, companyId, type, status, created_at) VALUES ('" +
-    user.firstname +
-    "', '" +
-    user.lastname +
-    "', '" +
-    user.email +
-    "', '" +
-    user.phone +
-    "', '" +
-    user.password +
-    "', '" +
-    user.companyId +
-    "', '" +
-    user.type +
-    "', '" +
-    user.status +
-    "', '" +
-    user.created_at +
-    "')";
-  db.query(query, function (error, results, fields) {
-    if (error) throw error;
-    db.query(
-      "SELECT *, users.id as id FROM users JOIN companies ON users.companyId=companies.id",
-      function (error, results, fields) {
-        if (error) throw error;
-        res.send({ status: 200, result: results });
-      }
-    );
-  });
+  console.log(deal);
+  //   var query =
+  //     "INSERT INTO users (firstname, lastname, email, phone, password, companyId, type, status, created_at) VALUES ('" +
+  //     user.firstname +
+  //     "', '" +
+  //     user.lastname +
+  //     "', '" +
+  //     user.email +
+  //     "', '" +
+  //     user.phone +
+  //     "', '" +
+  //     user.password +
+  //     "', '" +
+  //     user.companyId +
+  //     "', '" +
+  //     user.type +
+  //     "', '" +
+  //     user.status +
+  //     "', '" +
+  //     user.created_at +
+  //     "')";
+  //   con.query(query, function (error, results, fields) {
+  //     if (error) throw error;
+  //     con.query(
+  //       "SELECT *, users.id as id FROM users JOIN companies ON users.companyId=companies.id",
+  //       function (error, results, fields) {
+  //         if (error) throw error;
+  //         res.send({ status: 200, result: results });
+  //       }
+  //     );
+  //   });
 });
 router.post("/update", (req, res) => {
   var dt = new Date();

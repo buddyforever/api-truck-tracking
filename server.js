@@ -6,6 +6,7 @@ var cors = require("cors");
 var authRouter = require("./routes/auth");
 var usersRouter = require("./routes/users");
 var companiesRouter = require("./routes/companies");
+var dealsRouter = require("./routes/deals");
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -29,6 +30,7 @@ var port = process.env.PORT || 8080; // set our port
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/companies", companiesRouter);
+app.use("/api/deals", dealsRouter);
 
 // START THE SERVER
 // =============================================================================

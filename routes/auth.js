@@ -1,25 +1,14 @@
 var express = require("express");
-var mysql = require("mysql");
 var router = express.Router();
 
-var con = mysql.createConnection({
-  host: "localhost",
-  database: "truck_tracking",
-  user: "root",
-  password: "",
-});
-
-con.connect(function (err) {
-  if (err) throw err;
-  console.log("Connected!");
-});
+var db = require("../db");
 
 router.post("/signin", (req, res) => {
   var user = {
     email: req.body.email,
     password: req.body.password,
   };
-  con.query(
+  db.query(
     "SELECT * FROM users WHERE email='" +
       user.email +
       "' AND password='" +
