@@ -20,14 +20,15 @@ router.post("/signin", (req, res) => {
     password: req.body.password,
   };
   con.query(
-    "SELECT * FROM users WHERE email=" +
+    "SELECT * FROM users WHERE email='" +
       user.email +
-      " AND password=" +
+      "' AND password='" +
       user.password +
-      " AND status=1",
+      "' AND status=1",
     function (error, results, fields) {
       if (error) throw error;
-      console.log(results);
+      if (results.length) res.send({ status: 200, result: results });
+      else res.send({ status: 404 });
     }
   );
 });
