@@ -30,19 +30,6 @@ router.get("/get/:id", (req, res) => {
   });
 });
 router.post("/add", (req, res) => {
-  var dt = new Date();
-  var now =
-    dt.getFullYear() +
-    "-" +
-    (dt.getMonth() + 1) +
-    "-" +
-    dt.getDate() +
-    " " +
-    dt.getHours() +
-    ":" +
-    dt.getMinutes() +
-    ":" +
-    dt.getSeconds();
   var deal = {
     companyId: req.body.companyId,
     driverName: req.body.driverName,
@@ -58,7 +45,7 @@ router.post("/add", (req, res) => {
     quantity: req.body.quantity,
     newQuantity: req.body.newQuantity,
     alertTime: req.body.alertTime,
-    startDateTime: now,
+    startDateTime: req.body.startDateTime,
     borderNumber: req.body.borderNumber,
     receiptNumber: req.body.receiptNumber,
     description: req.body.description,
