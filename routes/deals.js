@@ -7,7 +7,7 @@ router.get("/get", (req, res) => {
   //   var companyId = req.body.companyId;
   //   console.log(req.body);
   var query =
-    "SELECT *, deals.id as id, DATE_FORMAT(startDateTime, '%Y-%m-%d %H:%i:%s') as startDateTime, DATE_FORMAT(finishDateTime, '%Y-%m-%d %H:%i:%s') as finishDateTime FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id";
+    "SELECT *, DATE_FORMAT(startDateTime, '%Y-%m-%d %H:%i:%s') as startDateTime, DATE_FORMAT(finishDateTime, '%Y-%m-%d %H:%i:%s') as finishDateTime FROM deals";
   //if (companyId != 0) query = query + " WHERE deals.companyId=" + companyId;
   db.query(query, function (error, results, fields) {
     if (error) throw error;
@@ -20,7 +20,7 @@ router.get("/get/:id", (req, res) => {
   //   console.log(req.body);
   var dealId = req.params.id;
   var query =
-    "SELECT *, deals.id as id, DATE_FORMAT(startDateTime, '%Y-%m-%d %H:%i:%s') as startDateTime, DATE_FORMAT(finishDateTime, '%Y-%m-%d %H:%i:%s') as finishDateTime FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id WHERE deals.id=" +
+    "SELECT *, DATE_FORMAT(startDateTime, '%Y-%m-%d %H:%i:%s') as startDateTime, DATE_FORMAT(finishDateTime, '%Y-%m-%d %H:%i:%s') as finishDateTime FROM deals WHERE id=" +
     dealId;
   //if (companyId != 0) query = query + " WHERE deals.companyId=" + companyId;
   db.query(query, function (error, results, fields) {
@@ -96,8 +96,10 @@ router.post("/add", (req, res) => {
     ")";
   db.query(query, function (error, results, fields) {
     if (error) throw error;
+    var insertId = results.insertId;
+    console.log("inserted id: " + insertId);
     db.query(
-      "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id",
+      "SELECT *, DATE_FORMAT(startDateTime, '%Y-%m-%d %H:%i:%s') as startDateTime, DATE_FORMAT(finishDateTime, '%Y-%m-%d %H:%i:%s') as finishDateTime FROM deals",
       function (error, results, fields) {
         if (error) throw error;
         res.send({ status: 200, result: results });
@@ -189,7 +191,7 @@ router.post("/update", (req, res) => {
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     db.query(
-      "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id",
+      "SELECT *, DATE_FORMAT(startDateTime, '%Y-%m-%d %H:%i:%s') as startDateTime, DATE_FORMAT(finishDateTime, '%Y-%m-%d %H:%i:%s') as finishDateTime FROM deals",
       function (error, results, fields) {
         if (error) throw error;
         res.send({ status: 200, result: results });
