@@ -31,6 +31,7 @@ router.get("/get/:id", (req, res) => {
 });
 router.post("/add", (req, res) => {
   var deal = {
+    userId: req.body.userId,
     companyId: req.body.companyId,
     driverName: req.body.driverName,
     driverPhone: req.body.driverPhone,
@@ -97,7 +98,31 @@ router.post("/add", (req, res) => {
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     var insertId = results.insertId;
-    console.log("inserted id: " + insertId);
+    if (deal.companyId == 1)
+      query =
+        "INSERT INTO submit_logs (userId, dealId, amount, dealStatus, submitDateTime) VALUES (" +
+        deal.userId +
+        ", " +
+        insertId +
+        ", " +
+        deal.netWeight +
+        ", 1, '" +
+        deal.startDateTime +
+        "')";
+    else if (deal.companyId == 2)
+      query =
+        "INSERT INTO submit_logs (userId, dealId, quantity, dealStatus, submitDateTime) VALUES (" +
+        deal.userId +
+        ", " +
+        insertId +
+        ", " +
+        deal.quantity +
+        ", 1, '" +
+        deal.startDateTime +
+        "')";
+    db.query(query, function (error, results, fields) {
+      if (error) throw error;
+    });
     db.query(
       "SELECT *, DATE_FORMAT(startDateTime, '%Y-%m-%d %H:%i:%s') as startDateTime, DATE_FORMAT(finishDateTime, '%Y-%m-%d %H:%i:%s') as finishDateTime FROM deals",
       function (error, results, fields) {
@@ -123,6 +148,7 @@ router.post("/update", (req, res) => {
     dt.getSeconds();
   var deal = {
     id: req.body.id,
+    userId: req.body.userId,
     companyId: req.body.companyId,
     driverName: req.body.driverName,
     driverPhone: req.body.driverPhone,
@@ -143,6 +169,7 @@ router.post("/update", (req, res) => {
     description: req.body.description,
     newDescription: req.body.newDescription,
     status: req.body.status,
+    submitted: req.body.submitted,
   };
   var query =
     "UPDATE deals SET companyId=" +
@@ -190,6 +217,40 @@ router.post("/update", (req, res) => {
     deal.id;
   db.query(query, function (error, results, fields) {
     if (error) throw error;
+    if (deal.submitted) {
+      query = "";
+      if (deal.companyId == 1)
+        query =
+          "INSERT INTO submit_logs (userId, dealId, amount, dealStatus, submitDateTime) VALUES (" +
+          deal.userId +
+          ", " +
+          deal.id +
+          ", " +
+          deal.netWeight +
+          ", " +
+          deal.status +
+          ", '" +
+          now +
+          "')";
+      else if (deal.companyId == 2)
+        query =
+          "INSERT INTO submit_logs (userId, dealId, quantity, dealStatus, submitDateTime) VALUES (" +
+          deal.userId +
+          ", " +
+          deal.id +
+          ", " +
+          deal.quantity +
+          ", " +
+          deal.status +
+          ", '" +
+          now +
+          "')";
+      if (query != "") {
+        db.query(query, function (error, results, fields) {
+          if (error) throw error;
+        });
+      }
+    }
     db.query(
       "SELECT *, DATE_FORMAT(startDateTime, '%Y-%m-%d %H:%i:%s') as startDateTime, DATE_FORMAT(finishDateTime, '%Y-%m-%d %H:%i:%s') as finishDateTime FROM deals",
       function (error, results, fields) {
