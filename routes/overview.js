@@ -70,4 +70,132 @@ router.get("/getSupplierAvgDeliveryTime/:cid", (req, res) => {
     });
   });
 });
+router.get("/getDailyNumTrucks/:cid", (req, res) => {
+  var companyId = req.params.cid;
+  var now = new Date();
+  var date =
+    now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
+  var query =
+    "SELECT COUNT(*) as numTotalTrucks FROM deals WHERE DATE(startLoadingAt)='" +
+    date +
+    "' AND companyId=" +
+    companyId +
+    " GROUP BY DATE(startLoadingAt)";
+  db.query(query, function (error, results, fields) {
+    if (error) throw error;
+    if (results.length > 0)
+      res.send({
+        status: 200,
+        result: results,
+      });
+  });
+});
+router.get("/getDailyDeliveryTime/:cid", (req, res) => {
+  var companyId = req.params.cid;
+  var now = new Date();
+  var date =
+    now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
+  var query =
+    "SELECT SUM(TIMESTAMPDIFF(SECOND, finishLoadingAt, startUnloadingAt)) as deliveryTime, COUNT(*) as numTrucks FROM deals WHERE DATE(startUnloadingAt)='" +
+    date +
+    "' AND status>=3 AND companyId=" +
+    companyId +
+    " GROUP BY DATE(startUnloadingAt)";
+  db.query(query, function (error, results, fields) {
+    if (error) throw error;
+    if (results.length > 0)
+      res.send({
+        status: 200,
+        result: results,
+      });
+    else res.send({ status: 404 });
+  });
+});
+router.get("/getDailyLoss/:cid", (req, res) => {
+  var companyId = req.params.cid;
+  var now = new Date();
+  var date =
+    now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
+  var query = "";
+  if (companyId == 1)
+    query =
+      "SELECT SUM(netWeight-newNetWeight) as loss, COUNT(*) as numTrucks FROM deals WHERE DATE(startUnloadingAt)='" +
+      date +
+      "' AND status>=3 AND companyId=1 GROUP BY DATE(startUnloadingAt)";
+  else if (companyId == 2)
+    query =
+      "SELECT SUM(quantity-newQuantity) as loss, COUNT(*) as numTrucks FROM deals WHERE DATE(startUnloadingAt)='" +
+      date +
+      "' AND status>=3 AND companyId=2 GROUP BY DATE(startUnloadingAt)";
+  db.query(query, function (error, results, fields) {
+    if (error) throw error;
+    if (results.length > 0)
+      res.send({
+        status: 200,
+        result: results,
+      });
+    else res.send({ status: 404 });
+  });
+});
+router.get("/getDailyTotal/:cid", (req, res) => {
+  var companyId = req.params.cid;
+  var now = new Date();
+  var date =
+    now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
+  var query = "";
+  if (companyId == 1)
+    query =
+      "SELECT SUM(newNetWeight) as unloadedAmount, COUNT(*) as numTrucks FROM deals WHERE DATE(startUnloadingAt)='" +
+      date +
+      "' AND status>=3 AND companyId=1 GROUP BY DATE(startUnloadingAt)";
+  else if (companyId == 2)
+    query =
+      "SELECT SUM(newQuantity) as unloadedAmount, COUNT(*) as numTrucks FROM deals WHERE DATE(startUnloadingAt)='" +
+      date +
+      "' AND status>=3 AND companyId=2 GROUP BY DATE(startUnloadingAt)";
+  db.query(query, function (error, results, fields) {
+    if (error) throw error;
+    if (results.length > 0)
+      res.send({
+        status: 200,
+        result: results,
+      });
+    else res.send({ status: 404 });
+  });
+});
+
+router.get("/getDailyTotalLoadingUnloadingTime/:cid", (req, res) => {
+  var companyId = req.params.cid;
+  var query =
+    "SELECT DATE(finishUnloadingAt) as date, SUM(TIMESTAMPDIFF(SECOND, startLoadingAt, finishLoadingAt)) as loading_time, SUM(TIMESTAMPDIFF(SECOND, startUnloadingAt, finishUnloadingAt)) as unloading_time FROM deals WHERE status=4 AND companyId=" +
+    companyId +
+    " GROUP BY DATE(finishUnloadingAt)";
+  db.query(query, function (error, results, fields) {
+    if (error) throw error;
+    if (results.length > 0)
+      res.send({
+        status: 200,
+        result: results,
+      });
+    else res.send({ status: 404 });
+  });
+});
+router.get("/getMonthlyTotalVsLoss/:cid", (req, res) => {
+  var companyId = req.params.cid;
+  var query = "";
+  if (companyId == 1)
+    query =
+      "SELECT MONTH(startUnloadingAt) as month, SUM(newNetWeight) as total, SUM(netWeight-newNetWeight) as netLoss FROM deals WHERE status>=3 AND companyId=1 GROUP BY MONTH(startUnloadingAt)";
+  if (companyId == 2)
+    query =
+      "SELECT MONTH(startUnloadingAt) as month, SUM(newQuantity) as total, SUM(quantity-newQuantity) as netLoss FROM deals WHERE status>=3 AND companyId=2 GROUP BY MONTH(startUnloadingAt)";
+  console.log(query);
+  db.query(query, function (error, results, fields) {
+    if (error) throw error;
+    res.send({
+      status: 200,
+      result: results,
+    });
+  });
+});
 module.exports = router;
