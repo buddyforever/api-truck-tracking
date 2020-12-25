@@ -7,6 +7,8 @@ var authRouter = require("./routes/auth");
 var usersRouter = require("./routes/users");
 var companiesRouter = require("./routes/companies");
 var dealsRouter = require("./routes/deals");
+var transportersRouter = require("./routes/transporters");
+var reportRouter = require("./routes/report");
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -31,6 +33,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/companies", companiesRouter);
 app.use("/api/deals", dealsRouter);
+app.use("/api/transporters", transportersRouter);
+app.use("/api/report", reportRouter);
 
 // START THE SERVER
 // =============================================================================

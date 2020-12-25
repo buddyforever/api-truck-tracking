@@ -24,6 +24,10 @@ router.get("/get/:id", (req, res) => {
   });
 });
 router.post("/add", (req, res) => {
+  var dt = new Date();
+  var nowDate =
+    dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate();
+  var nowTime = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
   var deal = {
     userId: req.body.userId,
     companyId: req.body.companyId,
@@ -93,12 +97,14 @@ router.post("/add", (req, res) => {
     if (error) throw error;
     var insertId = results.insertId;
     query =
-      "INSERT INTO submit_logs (userId, dealId, amount, dealStatus, submitDateTime) VALUES (" +
+      "INSERT INTO submit_logs (userId, dealId, dealStatus, submitDate, submitTime) VALUES (" +
       deal.userId +
       ", " +
       insertId +
       ", 1, '" +
-      deal.startLoadingAt +
+      nowDate +
+      "', '" +
+      nowTime +
       "')";
     db.query(query, function (error, results, fields) {
       if (error) throw error;
@@ -114,18 +120,9 @@ router.post("/add", (req, res) => {
 });
 router.post("/update", (req, res) => {
   var dt = new Date();
-  var now =
-    dt.getFullYear() +
-    "-" +
-    (dt.getMonth() + 1) +
-    "-" +
-    dt.getDate() +
-    " " +
-    dt.getHours() +
-    ":" +
-    dt.getMinutes() +
-    ":" +
-    dt.getSeconds();
+  var nowDate =
+    dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate();
+  var nowTime = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
   var deal = {
     id: req.body.id,
     userId: req.body.userId,
@@ -211,14 +208,16 @@ router.post("/update", (req, res) => {
     if (results.affectedRows) {
       if (deal.submitted) {
         query =
-          "INSERT INTO submit_logs (userId, dealId, dealStatus, submitDateTime) VALUES (" +
+          "INSERT INTO submit_logs (userId, dealId, dealStatus, submitDate, submitTime) VALUES (" +
           deal.userId +
           ", " +
           deal.id +
           ", " +
           deal.status +
           ", '" +
-          now +
+          nowDate +
+          "', '" +
+          nowTime +
           "')";
         db.query(query, function (error, results, fields) {
           if (error) throw error;
