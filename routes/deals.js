@@ -226,7 +226,7 @@ router.post("/update", (req, res) => {
           ", " +
           deal.id +
           ", " +
-          deal.netWeight +
+          (deal.status == 4 ? deal.newNetWeight : deal.netWeight) +
           ", " +
           deal.status +
           ", '" +
@@ -239,7 +239,7 @@ router.post("/update", (req, res) => {
           ", " +
           deal.id +
           ", " +
-          deal.quantity +
+          (deal.status == 4 ? deal.newQuantity : deal.quantity) +
           ", " +
           deal.status +
           ", '" +
