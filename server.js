@@ -32,7 +32,7 @@ app.use(function (req, res, next) {
 var port = process.env.PORT || 8080; // set our port
 
 //cronjob s tart
-//job.start();
+job.start();
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
