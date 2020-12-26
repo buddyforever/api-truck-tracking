@@ -148,7 +148,6 @@ router.get("/:id", (req, res) => {
     userId;
   db.query(query, function (error, results, fields) {
     if (error) throw error;
-    console.log(results);
     res.send({ status: 200, result: results });
   });
 });

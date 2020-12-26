@@ -6,6 +6,7 @@ var cors = require("cors");
 var job = require("./cronjob");
 
 var authRouter = require("./routes/auth");
+var overviewRouter = require("./routes/overview");
 var usersRouter = require("./routes/users");
 var companiesRouter = require("./routes/companies");
 var dealsRouter = require("./routes/deals");
@@ -35,6 +36,7 @@ var port = process.env.PORT || 8080; // set our port
 // job.start();
 
 app.use("/api/auth", authRouter);
+app.use("/api/overview", overviewRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/companies", companiesRouter);
 app.use("/api/deals", dealsRouter);
