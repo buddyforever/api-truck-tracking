@@ -4,10 +4,10 @@ var router = express.Router();
 var db = require("../db");
 
 router.post("/signin", (req, res) => {
-  var userIp = req.connection.remoteAddress.replace(/^.*:/, "");
   var user = {
     email: req.body.email,
     password: req.body.password,
+    ip_address: req.body.ip_address,
   };
   var dt = new Date();
   var now =
@@ -33,14 +33,13 @@ router.post("/signin", (req, res) => {
       if (results.length) {
         var query =
           "UPDATE users SET last_login='" + now + "' WHERE id=" + results[0].id;
-        console.log(query);
         db.query(query, function (error, results1, fields) {
           if (error) throw error;
           db.query(
             "INSERT INTO users_login (userId, ip_address, login_at) VALUES (" +
               results[0].id +
               ", '" +
-              userIp +
+              user.ip_address +
               "', '" +
               now +
               "')",
