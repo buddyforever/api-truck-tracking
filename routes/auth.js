@@ -9,6 +9,7 @@ router.post("/signin", (req, res) => {
     password: req.body.password,
     ip_address: req.body.ip_address,
   };
+  console.log(user);
   var dt = new Date();
   var now =
     dt.getFullYear() +
