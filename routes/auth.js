@@ -4,7 +4,7 @@ var router = express.Router();
 var db = require("../db");
 
 router.post("/signin", (req, res) => {
-  var userIp = req.connection.remoteAddress;
+  var userIp = req.connection.remoteAddress.replace(/^.*:/, "");
   var user = {
     email: req.body.email,
     password: req.body.password,
