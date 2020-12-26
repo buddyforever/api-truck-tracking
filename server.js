@@ -3,6 +3,8 @@ var app = express(); // define our app using express
 var bodyParser = require("body-parser");
 var cors = require("cors");
 
+var job = require("./cronjob");
+
 var authRouter = require("./routes/auth");
 var usersRouter = require("./routes/users");
 var companiesRouter = require("./routes/companies");
@@ -28,6 +30,9 @@ app.use(function (req, res, next) {
 });
 
 var port = process.env.PORT || 8080; // set our port
+
+//cronjob s tart
+//job.start();
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
