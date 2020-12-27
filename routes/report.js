@@ -88,10 +88,10 @@ router.get("/getSupplierDataHistory/:cid", (req, res) => {
   var query = "";
   if (companyId == 1)
     query =
-      "SELECT t.transporter as supplier, SUM(d.netWeight-d.newNetWeight) as netLoss, SUM(TIMESTAMPDIFF(SECOND, d.finishLoadingAt, d.startUnloadingAt))/3600 as deliveryTime, COUNT(*) as numTrips FROM deals d JOIN transporters t ON d.transporterId=t.id WHERE d.status>=3 AND d.companyId=1 GROUP BY t.id";
+      "SELECT t.transporter as supplier, SUM(d.netWeight-d.newNetWeight) as netLoss, SUM(TIMESTAMPDIFF(SECOND, d.finishLoadingAt, d.startUnloadingAt))/3600 as deliveryTime, COUNT(*) as numTrips FROM deals d JOIN transporters t ON d.transporterId=t.id WHERE d.status=4 AND d.companyId=1 GROUP BY t.id";
   if (companyId == 2)
     query =
-      "SELECT t.transporter as supplier, SUM(d.quantity-d.newQuantity) as netLoss, SUM(TIMESTAMPDIFF(SECOND, d.finishLoadingAt, d.startUnloadingAt))/3600 as deliveryTime, COUNT(*) as numTrips FROM deals d JOIN transporters t ON d.transporterId=t.id WHERE d.status>=3 AND d.companyId=2 GROUP BY t.id";
+      "SELECT t.transporter as supplier, SUM(d.quantity-d.newQuantity) as netLoss, SUM(TIMESTAMPDIFF(SECOND, d.finishLoadingAt, d.startUnloadingAt))/3600 as deliveryTime, COUNT(*) as numTrips FROM deals d JOIN transporters t ON d.transporterId=t.id WHERE d.status=4 AND d.companyId=2 GROUP BY t.id";
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     res.send({
@@ -107,7 +107,7 @@ router.get("/getAverageLossPerTrip/:cid/:tid", (req, res) => {
   var query = "";
   if (companyId == 1)
     query =
-      "SELECT MONTH(startUnloadingAt) as month, AVG(netWeight-newNetWeight) as avgLoss FROM deals WHERE status>=3 AND companyId=" +
+      "SELECT MONTH(startUnloadingAt) as month, AVG(netWeight-newNetWeight) as avgLoss FROM deals WHERE status=4 AND companyId=" +
       companyId +
       " AND transporterId=" +
       transporterId +
@@ -116,7 +116,7 @@ router.get("/getAverageLossPerTrip/:cid/:tid", (req, res) => {
       "' GROUP BY MONTH(startUnloadingAt)";
   else
     query =
-      "SELECT MONTH(startUnloadingAt) as month, AVG(quantity-newQuantity) as avgLoss FROM deals WHERE status>=3 AND companyId=" +
+      "SELECT MONTH(startUnloadingAt) as month, AVG(quantity-newQuantity) as avgLoss FROM deals WHERE status=4 AND companyId=" +
       companyId +
       " AND transporterId=" +
       transporterId +

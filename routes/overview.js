@@ -44,10 +44,10 @@ router.get("/getSupplierNetLoss/:cid", (req, res) => {
   var query = "";
   if (companyId == 1)
     query =
-      "SELECT t.transporter as supplier, SUM(d.netWeight-d.newNetWeight) as netLoss FROM deals d JOIN transporters t ON d.transporterId=t.id WHERE d.status>=3 AND d.companyId=1 GROUP BY t.id";
+      "SELECT t.transporter as supplier, SUM(d.netWeight-d.newNetWeight) as netLoss FROM deals d JOIN transporters t ON d.transporterId=t.id WHERE d.status=4 AND d.companyId=1 GROUP BY t.id";
   if (companyId == 2)
     query =
-      "SELECT t.transporter as supplier, SUM(d.quantity-d.newQuantity) as netLoss FROM deals d JOIN transporters t ON d.transporterId=t.id WHERE d.status>=3 AND d.companyId=2 GROUP BY t.id";
+      "SELECT t.transporter as supplier, SUM(d.quantity-d.newQuantity) as netLoss FROM deals d JOIN transporters t ON d.transporterId=t.id WHERE d.status=4 AND d.companyId=2 GROUP BY t.id";
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     res.send({
@@ -122,12 +122,12 @@ router.get("/getDailyLoss/:cid", (req, res) => {
     query =
       "SELECT SUM(netWeight-newNetWeight) as loss, COUNT(*) as numTrucks FROM deals WHERE DATE(startUnloadingAt)='" +
       date +
-      "' AND status>=3 AND companyId=1 GROUP BY DATE(startUnloadingAt)";
+      "' AND status=4 AND companyId=1 GROUP BY DATE(startUnloadingAt)";
   else if (companyId == 2)
     query =
       "SELECT SUM(quantity-newQuantity) as loss, COUNT(*) as numTrucks FROM deals WHERE DATE(startUnloadingAt)='" +
       date +
-      "' AND status>=3 AND companyId=2 GROUP BY DATE(startUnloadingAt)";
+      "' AND status=4 AND companyId=2 GROUP BY DATE(startUnloadingAt)";
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     if (results.length > 0)
@@ -148,12 +148,12 @@ router.get("/getDailyTotal/:cid", (req, res) => {
     query =
       "SELECT SUM(newNetWeight) as unloadedAmount, COUNT(*) as numTrucks FROM deals WHERE DATE(startUnloadingAt)='" +
       date +
-      "' AND status>=3 AND companyId=1 GROUP BY DATE(startUnloadingAt)";
+      "' AND status=4 AND companyId=1 GROUP BY DATE(startUnloadingAt)";
   else if (companyId == 2)
     query =
       "SELECT SUM(newQuantity) as unloadedAmount, COUNT(*) as numTrucks FROM deals WHERE DATE(startUnloadingAt)='" +
       date +
-      "' AND status>=3 AND companyId=2 GROUP BY DATE(startUnloadingAt)";
+      "' AND status=4 AND companyId=2 GROUP BY DATE(startUnloadingAt)";
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     if (results.length > 0)
@@ -186,10 +186,10 @@ router.get("/getMonthlyTotalVsLoss/:cid", (req, res) => {
   var query = "";
   if (companyId == 1)
     query =
-      "SELECT MONTH(startUnloadingAt) as month, SUM(newNetWeight) as total, SUM(netWeight-newNetWeight) as netLoss FROM deals WHERE status>=3 AND companyId=1 GROUP BY MONTH(startUnloadingAt)";
+      "SELECT MONTH(startUnloadingAt) as month, SUM(newNetWeight) as total, SUM(netWeight-newNetWeight) as netLoss FROM deals WHERE status=4 AND companyId=1 GROUP BY MONTH(startUnloadingAt)";
   if (companyId == 2)
     query =
-      "SELECT MONTH(startUnloadingAt) as month, SUM(newQuantity) as total, SUM(quantity-newQuantity) as netLoss FROM deals WHERE status>=3 AND companyId=2 GROUP BY MONTH(startUnloadingAt)";
+      "SELECT MONTH(startUnloadingAt) as month, SUM(newQuantity) as total, SUM(quantity-newQuantity) as netLoss FROM deals WHERE status=4 AND companyId=2 GROUP BY MONTH(startUnloadingAt)";
 
   db.query(query, function (error, results, fields) {
     if (error) throw error;
