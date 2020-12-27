@@ -88,6 +88,7 @@ router.get("/getDailyNumTrucks/:cid", (req, res) => {
         status: 200,
         result: results,
       });
+    else res.send({ status: 404 });
   });
 });
 router.get("/getDailyDeliveryTime/:cid", (req, res) => {
@@ -189,7 +190,7 @@ router.get("/getMonthlyTotalVsLoss/:cid", (req, res) => {
   if (companyId == 2)
     query =
       "SELECT MONTH(startUnloadingAt) as month, SUM(newQuantity) as total, SUM(quantity-newQuantity) as netLoss FROM deals WHERE status>=3 AND companyId=2 GROUP BY MONTH(startUnloadingAt)";
-  console.log(query);
+
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     res.send({
