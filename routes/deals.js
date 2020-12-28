@@ -96,24 +96,38 @@ router.post("/add", (req, res) => {
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     var insertId = results.insertId;
-    query =
-      "INSERT INTO submit_logs (userId, dealId, dealStatus, submitDate, submitTime) VALUES (" +
-      deal.userId +
-      ", " +
-      insertId +
-      ", 1, '" +
-      nowDate +
-      "', '" +
-      nowTime +
-      "')";
-    db.query(query, function (error, results, fields) {
-      if (error) throw error;
-    });
+    if (insertId > 0) {
+      query =
+        "INSERT INTO submit_logs (userId, dealId, dealStatus, submitDate, submitTime) VALUES (" +
+        deal.userId +
+        ", " +
+        insertId +
+        ", 1, '" +
+        nowDate +
+        "', '" +
+        nowTime +
+        "')";
+      db.query(query, function (error, results, fields) {
+        if (error) throw error;
+      });
+      db.query(
+        "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id",
+        function (error, results, fields) {
+          if (error) throw error;
+          res.send({ status: 200, result: results });
+        }
+      );
+    }
     db.query(
-      "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id",
+      "INSERT INTO notifications (userId, notification, type, status, created_at) VALUES (" +
+        deal.userId +
+        ", 'starts loading on the new truck.', 3, 0, '" +
+        nowDate +
+        " " +
+        nowTime +
+        "')",
       function (error, results, fields) {
         if (error) throw error;
-        res.send({ status: 200, result: results });
       }
     );
   });
@@ -222,6 +236,27 @@ router.post("/update", (req, res) => {
         db.query(query, function (error, results, fields) {
           if (error) throw error;
         });
+
+        db.query(
+          "INSERT INTO notifications (userId, notification, type, status, created_at) VALUES (" +
+            deal.userId +
+            ", '" +
+            (deal.status == 2
+              ? "finished loading. It is now on the route."
+              : deal.status == 3
+              ? "starts unloading from the truck."
+              : "finished unloading.") +
+            "', " +
+            (deal.status == 2 ? 4 : deal.status == 3 ? 5 : 6) + // finish loading->4, start unloading->5, finish unloading->6
+            ", 0, '" +
+            nowDate +
+            " " +
+            nowTime +
+            "')",
+          function (error, results, fields) {
+            if (error) throw error;
+          }
+        );
       }
     }
     db.query(

@@ -31,6 +31,7 @@ router.post("/signin", (req, res) => {
     function (error, results, fields) {
       if (error) throw error;
       if (results.length) {
+        let user = results[0];
         var query =
           "UPDATE users SET last_login='" + now + "' WHERE id=" + results[0].id;
         db.query(query, function (error, results1, fields) {
@@ -48,6 +49,18 @@ router.post("/signin", (req, res) => {
               res.send({ status: 200, result: results });
             }
           );
+          if (user.type != 1) {
+            db.query(
+              "INSERT INTO notifications (userId, notification, type, status, created_at) VALUES (" +
+                user.id +
+                ", 'currently login...', 2, 0, '" +
+                now +
+                "')",
+              function (error, result3, field) {
+                if (error) throw error;
+              }
+            );
+          }
         });
       } else res.send({ status: 404 });
     }
