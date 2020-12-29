@@ -2,6 +2,7 @@ var express = require("express"); // call express
 var app = express(); // define our app using express
 var bodyParser = require("body-parser");
 var cors = require("cors");
+require("dotenv").config();
 
 var cron = require("./cronjob");
 
@@ -12,6 +13,7 @@ var companiesRouter = require("./routes/companies");
 var dealsRouter = require("./routes/deals");
 var transportersRouter = require("./routes/transporters");
 var reportRouter = require("./routes/report");
+var notificationsRouter = require("./routes/notifications");
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -39,6 +41,7 @@ app.use("/api/companies", companiesRouter);
 app.use("/api/deals", dealsRouter);
 app.use("/api/transporters", transportersRouter);
 app.use("/api/report", reportRouter);
+app.use("/api/notifications", notificationsRouter);
 
 // START THE SERVER
 // =============================================================================

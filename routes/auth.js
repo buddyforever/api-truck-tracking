@@ -49,18 +49,18 @@ router.post("/signin", (req, res) => {
               res.send({ status: 200, result: results });
             }
           );
-          if (user.type != 1) {
-            db.query(
-              "INSERT INTO notifications (userId, notification, type, status, created_at) VALUES (" +
-                user.id +
-                ", 'currently login...', 2, 0, '" +
-                now +
-                "')",
-              function (error, result3, field) {
-                if (error) throw error;
-              }
-            );
-          }
+          // if (user.type != 1) { // save user login to notifications table
+          //   db.query(
+          //     "INSERT INTO notifications (userId, notification, type, status, created_at) VALUES (" +
+          //       user.id +
+          //       ", 'currently login...', 2, 0, '" +
+          //       now +
+          //       "')",
+          //     function (error, result3, field) {
+          //       if (error) throw error;
+          //     }
+          //   );
+          // }
         });
       } else res.send({ status: 404 });
     }

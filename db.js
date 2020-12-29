@@ -1,11 +1,15 @@
 var mysql = require("mysql");
-var con = mysql.createConnection({
-  host: "38.17.53.108",
-  database: "truck_tracking",
-  user: "root",
-  password: "goqkdtks.123",
-  port: 17154,
-});
+require("dotenv").config();
+
+var dbconfig = {
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  port: process.env.DB_PORT,
+};
+
+var con = mysql.createConnection(dbconfig);
 
 con.connect(function (err) {
   if (err) throw err;
