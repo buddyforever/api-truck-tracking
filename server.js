@@ -4,7 +4,8 @@ var bodyParser = require("body-parser");
 var cors = require("cors");
 require("dotenv").config();
 
-var cron = require("./cronjob");
+var cron1 = require("./cronjob1");
+var cron2 = require("./cronjob2");
 
 var authRouter = require("./routes/auth");
 var overviewRouter = require("./routes/overview");
