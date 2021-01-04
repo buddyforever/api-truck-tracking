@@ -100,10 +100,10 @@ router.get("/getSupplierDataHistory/:cid", (req, res) => {
     });
   });
 });
-router.get("/getAverageLossPerTrip/:cid/:tid", (req, res) => {
+router.get("/getAverageLossPerTrip/:cid/:tid/:yid", (req, res) => {
   var companyId = req.params.cid;
   var transporterId = req.params.tid;
-  var year = new Date().getFullYear();
+  var year = req.params.yid;
   var query = "";
   if (companyId == 1)
     query =

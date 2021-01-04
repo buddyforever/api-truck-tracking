@@ -5,7 +5,7 @@ var db = require("../db");
 
 router.get("/get", (req, res) => {
   var query =
-    "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id";
+    "SELECT *, deals.id as id, deals.companyId as companyId FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id";
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     if (results.length > 0) res.send({ status: 200, result: results });
@@ -15,7 +15,7 @@ router.get("/get", (req, res) => {
 router.get("/get/:id", (req, res) => {
   var dealId = req.params.id;
   var query =
-    "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id WHERE deals.id=" +
+    "SELECT *, deals.id as id, deals.companyId as companyId FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id WHERE deals.id=" +
     dealId;
   db.query(query, function (error, results, fields) {
     if (error) throw error;
@@ -114,7 +114,7 @@ router.post("/add", (req, res) => {
         if (error) throw error;
       });
       db.query(
-        "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id",
+        "SELECT *, deals.id as id, deals.companyId as companyId FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id",
         function (error, results, fields) {
           if (error) throw error;
           res.send({ status: 200, result: results });
@@ -266,7 +266,7 @@ router.post("/update", (req, res) => {
       }
     }
     db.query(
-      "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id",
+      "SELECT *, deals.id as id, deals.companyId as companyId FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id",
       function (error, results, fields) {
         if (error) throw error;
         res.send({ status: 200, result: results });
