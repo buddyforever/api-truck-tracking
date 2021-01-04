@@ -108,7 +108,7 @@ function getLateTrucks() {
       ":" +
       today.getSeconds();
     let query =
-      "SELECT d.*, t.*, p.productName, d.id as id FROM deals d JOIN transporters t ON t.id=d.transporterId JOIN products p ON d.productId=p.id WHERE d.status=2 AND DATE_ADD(d.finishLoadingAt, INTERVAL d.alertTime MINUTE) < '" +
+      "SELECT d.*, t.*, p.productName, d.id as id FROM deals d JOIN transporters t ON t.id=d.transporterId JOIN products p ON d.productId=p.id WHERE d.status=2 AND d.reported=0 AND DATE_ADD(d.finishLoadingAt, INTERVAL d.alertTime MINUTE) < '" +
       now +
       "' AND DATE(d.finishLoadingAt)='" +
       nowDate +
@@ -150,6 +150,10 @@ cron1.schedule("* * * * *", async () => {
             " is still on route and exceed the alert time.', 1, 0, '" +
             now +
             "')";
+          db.query(query, function (error, results, fields) {
+            if (error) throw error;
+          });
+          query = "UPDATE deals SET reported=1 WHERE id=" + truck.id;
           db.query(query, function (error, results, fields) {
             if (error) throw error;
           });
