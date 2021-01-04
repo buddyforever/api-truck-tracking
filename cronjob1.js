@@ -74,10 +74,7 @@ async function sendMail(trucks) {
   email_content += "</table>";
   var mailOptions = {
     from: process.env.SUPPORT_EMAIL_USER,
-    to: [
-      //process.env.ADMIN_EMAIL_USER,
-      "buddyforever.dev@gmail.com",
-    ],
+    to: [process.env.ADMIN_EMAIL_USER, "buddyforever.dev@gmail.com"],
     subject: "Daily report",
     html: email_content,
   };
