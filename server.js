@@ -14,6 +14,7 @@ var dealsRouter = require("./routes/deals");
 var transportersRouter = require("./routes/transporters");
 var reportRouter = require("./routes/report");
 var notificationsRouter = require("./routes/notifications");
+var productsRouter = require("./routes/products");
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -42,6 +43,7 @@ app.use("/api/deals", dealsRouter);
 app.use("/api/transporters", transportersRouter);
 app.use("/api/report", reportRouter);
 app.use("/api/notifications", notificationsRouter);
+app.use("/api/products", productsRouter);
 
 // START THE SERVER
 // =============================================================================

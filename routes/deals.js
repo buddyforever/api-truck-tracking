@@ -5,7 +5,7 @@ var db = require("../db");
 
 router.get("/get", (req, res) => {
   var query =
-    "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id";
+    "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id";
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     if (results.length > 0) res.send({ status: 200, result: results });
@@ -15,7 +15,7 @@ router.get("/get", (req, res) => {
 router.get("/get/:id", (req, res) => {
   var dealId = req.params.id;
   var query =
-    "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id WHERE deals.id=" +
+    "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id WHERE deals.id=" +
     dealId;
   db.query(query, function (error, results, fields) {
     if (error) throw error;
@@ -37,6 +37,7 @@ router.post("/add", (req, res) => {
     trailerPlate: req.body.trailerPlate,
     secondPlate: req.body.secondPlate,
     transporterId: req.body.transporterId,
+    productId: req.body.productId,
     firstWeight: req.body.firstWeight,
     secondWeight: req.body.secondWeight,
     netWeight: req.body.netWeight,
@@ -52,7 +53,7 @@ router.post("/add", (req, res) => {
     status: 1,
   };
   var query =
-    "INSERT INTO deals (companyId, driverName, driverPhone, truckPlate, trailerPlate, secondPlate, transporterId, firstWeight, secondWeight, netWeight, newNetWeight, quantity, newQuantity, alertTime, borderNumber, receiptNumber, description, newDescription, startLoadingAt, status) VALUES (" +
+    "INSERT INTO deals (companyId, driverName, driverPhone, truckPlate, trailerPlate, secondPlate, transporterId, productId, firstWeight, secondWeight, netWeight, newNetWeight, quantity, newQuantity, alertTime, borderNumber, receiptNumber, description, newDescription, startLoadingAt, status) VALUES (" +
     deal.companyId +
     ", '" +
     deal.driverName +
@@ -66,21 +67,23 @@ router.post("/add", (req, res) => {
     deal.secondPlate +
     "', " +
     deal.transporterId +
-    ", '" +
+    ", " +
+    deal.productId +
+    ", " +
     deal.firstWeight +
-    "', '" +
+    ", " +
     deal.secondWeight +
-    "', '" +
+    ", " +
     deal.netWeight +
-    "', '" +
+    ", " +
     deal.newNetWeight +
-    "', '" +
+    ", " +
     deal.quantity +
-    "', '" +
+    ", " +
     deal.newQuantity +
-    "', '" +
+    ", " +
     deal.alertTime +
-    "', '" +
+    ", '" +
     deal.borderNumber +
     "', '" +
     deal.receiptNumber +
@@ -111,7 +114,7 @@ router.post("/add", (req, res) => {
         if (error) throw error;
       });
       db.query(
-        "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id",
+        "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id",
         function (error, results, fields) {
           if (error) throw error;
           res.send({ status: 200, result: results });
@@ -147,6 +150,7 @@ router.post("/update", (req, res) => {
     trailerPlate: req.body.trailerPlate,
     secondPlate: req.body.secondPlate,
     transporterId: req.body.transporterId,
+    productId: req.body.productId,
     firstWeight: req.body.firstWeight,
     secondWeight: req.body.secondWeight,
     netWeight: req.body.netWeight,
@@ -180,6 +184,8 @@ router.post("/update", (req, res) => {
     deal.secondPlate +
     "', transporterId=" +
     deal.transporterId +
+    ", productId=" +
+    deal.productId +
     ", firstWeight=" +
     deal.firstWeight +
     ", secondWeight=" +
@@ -194,11 +200,11 @@ router.post("/update", (req, res) => {
     deal.newQuantity +
     ", alertTime=" +
     deal.alertTime +
-    ", borderNumber=" +
+    ", borderNumber='" +
     deal.borderNumber +
-    ", receiptNumber=" +
+    "', receiptNumber='" +
     deal.receiptNumber +
-    ", description='" +
+    "', description='" +
     deal.description +
     "', newDescription='" +
     deal.newDescription +
@@ -260,7 +266,7 @@ router.post("/update", (req, res) => {
       }
     }
     db.query(
-      "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id",
+      "SELECT *, deals.id as id FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id",
       function (error, results, fields) {
         if (error) throw error;
         res.send({ status: 200, result: results });
