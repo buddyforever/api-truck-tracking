@@ -183,13 +183,18 @@ router.get("/getDailyTotalLoadingUnloadingTime/:cid", (req, res) => {
 });
 router.get("/getMonthlyTotalVsLoss/:cid", (req, res) => {
   var companyId = req.params.cid;
+  var year = new Date().getFullYear();
   var query = "";
   if (companyId == 1)
     query =
-      "SELECT MONTH(startUnloadingAt) as month, SUM(newNetWeight) as total, SUM(netWeight-newNetWeight) as netLoss FROM deals WHERE status=4 AND companyId=1 GROUP BY MONTH(startUnloadingAt)";
+      "SELECT MONTH(startUnloadingAt) as month, SUM(newNetWeight) as total, SUM(netWeight-newNetWeight) as netLoss FROM deals WHERE YEAR(startUnloadingAt)=" +
+      year +
+      " AND status=4 AND companyId=1 GROUP BY MONTH(startUnloadingAt)";
   if (companyId == 2)
     query =
-      "SELECT MONTH(startUnloadingAt) as month, SUM(newQuantity) as total, SUM(quantity-newQuantity) as netLoss FROM deals WHERE status=4 AND companyId=2 GROUP BY MONTH(startUnloadingAt)";
+      "SELECT MONTH(startUnloadingAt) as month, SUM(newQuantity) as total, SUM(quantity-newQuantity) as netLoss FROM deals WHERE YEAR(startUnloadingAt)=" +
+      year +
+      " AND status=4 AND companyId=2 GROUP BY MONTH(startUnloadingAt)";
 
   db.query(query, function (error, results, fields) {
     if (error) throw error;
