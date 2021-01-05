@@ -19,18 +19,13 @@ router.get("/getLoginLogs/:cid/:uid", (req, res) => {
 });
 router.get("/getYearlyLoss/:cid", (req, res) => {
   var companyId = req.params.cid;
-  var year = new Date().getFullYear();
   var query = "";
   if (companyId == 1)
     query =
-      "SELECT YEAR(finishUnloadingAt) as year, SUM(netWeight-newNetWeight) as netLoss FROM deals WHERE companyId=1 AND status=4 AND YEAR(finishUnloadingAt)='" +
-      year +
-      "' GROUP BY YEAR(finishUnloadingAt)";
+      "SELECT YEAR(finishUnloadingAt) as year, SUM(netWeight-newNetWeight) as netLoss FROM deals WHERE companyId=1 AND status=4 GROUP BY YEAR(finishUnloadingAt)";
   if (companyId == 2)
     query =
-      "SELECT YEAR(finishUnloadingAt) as year, SUM(quantity-newQuantity) as netLoss FROM deals WHERE companyId=2 AND status=4 AND YEAR(finishUnloadingAt)='" +
-      year +
-      "' GROUP BY YEAR(finishUnloadingAt)";
+      "SELECT YEAR(finishUnloadingAt) as year, SUM(quantity-newQuantity) as netLoss FROM deals WHERE companyId=2 AND status=4 GROUP BY YEAR(finishUnloadingAt)";
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     res.send({
