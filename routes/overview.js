@@ -160,12 +160,36 @@ router.get("/getDailyTotal/:cid", (req, res) => {
   });
 });
 
-router.get("/getDailyTotalLoadingUnloadingTime/:cid", (req, res) => {
+router.get("/getDailyTotalLoadingUnloadingTime/:cid/:unit", (req, res) => {
   var companyId = req.params.cid;
-  var query =
-    "SELECT DATE(finishUnloadingAt) as date, SUM(TIMESTAMPDIFF(SECOND, startLoadingAt, finishLoadingAt)) as loading_time, SUM(TIMESTAMPDIFF(SECOND, startUnloadingAt, finishUnloadingAt)) as unloading_time FROM deals WHERE status=4 AND companyId=" +
-    companyId +
-    " GROUP BY DATE(finishUnloadingAt)";
+  var unit = req.params.unit;
+  var year = new Date().getFullYear();
+  var month = new Date().getMonth() + 1;
+  if (unit == "month")
+    var query =
+      "SELECT MONTH(finishUnloadingAt) as month, SUM(TIMESTAMPDIFF(SECOND, startLoadingAt, finishLoadingAt)) as loading_time, SUM(TIMESTAMPDIFF(SECOND, startUnloadingAt, finishUnloadingAt)) as unloading_time FROM deals WHERE status=4 AND companyId=" +
+      companyId +
+      " AND YEAR(finishUnloadingAt)=" +
+      year +
+      " GROUP BY MONTH(finishUnloadingAt)";
+  else if (unit == "week")
+    var query =
+      "SELECT FLOOR((DayOfMonth(startUnloadingAt)-1)/7)+1 as week, SUM(TIMESTAMPDIFF(SECOND, startLoadingAt, finishLoadingAt)) as loading_time, SUM(TIMESTAMPDIFF(SECOND, startUnloadingAt, finishUnloadingAt)) as unloading_time FROM deals WHERE status=4 AND companyId=" +
+      companyId +
+      " AND YEAR(finishUnloadingAt)=" +
+      year +
+      " AND MONTH(finishUnloadingAt)=" +
+      month +
+      " GROUP BY FLOOR((DayOfMonth(startUnloadingAt)-1)/7)+1";
+  else if (unit == "day")
+    var query =
+      "SELECT DATE_FORMAT(startUnloadingAt, '%Y-%m-%d') as day, SUM(TIMESTAMPDIFF(SECOND, startLoadingAt, finishLoadingAt)) as loading_time, SUM(TIMESTAMPDIFF(SECOND, startUnloadingAt, finishUnloadingAt)) as unloading_time FROM deals WHERE status=4 AND companyId=" +
+      companyId +
+      " AND YEAR(finishUnloadingAt)=" +
+      year +
+      " AND MONTH(finishUnloadingAt)=" +
+      month +
+      " GROUP BY DATE_FORMAT(startUnloadingAt, '%Y-%m-%d')";
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     if (results.length > 0)
