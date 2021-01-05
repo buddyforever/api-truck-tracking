@@ -50,13 +50,13 @@ router.get("/getAverageDeliveryTime/:cid/:unit", (req, res) => {
       "' GROUP BY FLOOR((DayOfMonth(startUnloadingAt)-1)/7)+1";
   else if (unit == "day")
     var query =
-      "SELECT DATE_FORMAT(startUnloadingAt, '%d') as day, AVG(TIMESTAMPDIFF(SECOND, finishLoadingAt, startUnloadingAt)) as avg_delievery_time FROM deals WHERE status>=3 AND companyId=" +
+      "SELECT DATE_FORMAT(startUnloadingAt, '%Y-%m-%d') as day, AVG(TIMESTAMPDIFF(SECOND, finishLoadingAt, startUnloadingAt)) as avg_delievery_time FROM deals WHERE status>=3 AND companyId=" +
       companyId +
       " AND YEAR(startUnloadingAt)='" +
       year +
       "' AND MONTH(startUnloadingAt)='" +
       month +
-      "' GROUP BY DATE_FORMAT(startUnloadingAt, '%d')";
+      "' GROUP BY DATE_FORMAT(startUnloadingAt, '%Y-%m-%d')";
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     res.send({
@@ -65,20 +65,55 @@ router.get("/getAverageDeliveryTime/:cid/:unit", (req, res) => {
     });
   });
 });
-router.get("/getMonthlyNetLoss/:cid", (req, res) => {
+router.get("/getMonthlyNetLoss/:cid/:unit", (req, res) => {
   var companyId = req.params.cid;
+  var unit = req.params.unit;
   var year = new Date().getFullYear();
+  var month = new Date().getMonth() + 1;
   var query = "";
-  if (companyId == 1)
-    query =
-      "SELECT MONTH(finishUnloadingAt) as month, AVG(netWeight-newNetWeight) as netLoss FROM deals WHERE companyId=1 AND status=4 AND YEAR(finishUnloadingAt)='" +
-      year +
-      "' GROUP BY MONTH(finishUnloadingAt)";
-  if (companyId == 2)
-    query =
-      "SELECT MONTH(finishUnloadingAt) as month, AVG(quantity-newQuantity) as netLoss FROM deals WHERE companyId=2 AND status=4 AND YEAR(finishUnloadingAt)='" +
-      year +
-      "' GROUP BY MONTH(finishUnloadingAt)";
+  if (unit == "month") {
+    if (companyId == 1)
+      query =
+        "SELECT MONTH(finishUnloadingAt) as month, AVG(netWeight-newNetWeight) as netLoss FROM deals WHERE companyId=1 AND status=4 AND YEAR(finishUnloadingAt)=" +
+        year +
+        " GROUP BY MONTH(finishUnloadingAt)";
+    if (companyId == 2)
+      query =
+        "SELECT MONTH(finishUnloadingAt) as month, AVG(quantity-newQuantity) as netLoss FROM deals WHERE companyId=2 AND status=4 AND YEAR(finishUnloadingAt)=" +
+        year +
+        " GROUP BY MONTH(finishUnloadingAt)";
+  } else if (unit == "week") {
+    if (companyId == 1)
+      query =
+        "SELECT FLOOR((DayOfMonth(startUnloadingAt)-1)/7)+1 as week, AVG(netWeight-newNetWeight) as netLoss FROM deals WHERE companyId=1 AND status=4 AND YEAR(finishUnloadingAt)=" +
+        year +
+        " AND MONTH(finishUnloadingAt)=" +
+        month +
+        " GROUP BY FLOOR((DayOfMonth(startUnloadingAt)-1)/7)+1";
+    if (companyId == 2)
+      query =
+        "SELECT FLOOR((DayOfMonth(startUnloadingAt)-1)/7)+1 as week, AVG(quantity-newQuantity) as netLoss FROM deals WHERE companyId=2 AND status=4 AND YEAR(finishUnloadingAt)=" +
+        year +
+        " AND MONTH(finishUnloadingAt)=" +
+        month +
+        " GROUP BY FLOOR((DayOfMonth(startUnloadingAt)-1)/7)+1";
+  } else if (unit == "day") {
+    if (companyId == 1)
+      query =
+        "SELECT DATE_FORMAT(startUnloadingAt, '%Y-%m-%d') as day, AVG(netWeight-newNetWeight) as netLoss FROM deals WHERE companyId=1 AND status=4 AND YEAR(finishUnloadingAt)=" +
+        year +
+        " AND MONTH(finishUnloadingAt)=" +
+        month +
+        " GROUP BY DATE_FORMAT(startUnloadingAt, '%Y-%m-%d')";
+    if (companyId == 2)
+      query =
+        "SELECT DATE_FORMAT(startUnloadingAt, '%Y-%m-%d') as day, AVG(quantity-newQuantity) as netLoss FROM deals WHERE companyId=2 AND status=4 AND YEAR(finishUnloadingAt)=" +
+        year +
+        " AND MONTH(finishUnloadingAt)='" +
+        month +
+        " GROUP BY DATE_FORMAT(startUnloadingAt, '%Y-%m-%d')";
+  }
+  console.log(query);
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     res.send({
@@ -180,7 +215,7 @@ router.get("/getAverageLossPerTrip/:cid/:tid/:unit", (req, res) => {
   } else if (unit == "day") {
     if (companyId == 1)
       query =
-        "SELECT DATE_FORMAT(startUnloadingAt, '%d') as day, AVG(netWeight-newNetWeight) as avgLoss FROM deals WHERE status=4 AND companyId=" +
+        "SELECT DATE_FORMAT(startUnloadingAt, '%Y-%m-%d') as day, AVG(netWeight-newNetWeight) as avgLoss FROM deals WHERE status=4 AND companyId=" +
         companyId +
         " AND transporterId=" +
         transporterId +
@@ -188,10 +223,10 @@ router.get("/getAverageLossPerTrip/:cid/:tid/:unit", (req, res) => {
         year +
         " AND MONTH(startUnloadingAt)=" +
         month +
-        " GROUP BY DATE_FORMAT(startUnloadingAt, '%d')";
+        " GROUP BY DATE_FORMAT(startUnloadingAt, '%Y-%m-%d')";
     else
       query =
-        "SELECT DATE_FORMAT(startUnloadingAt, '%d') as day, AVG(quantity-newQuantity) as avgLoss FROM deals WHERE status=4 AND companyId=" +
+        "SELECT DATE_FORMAT(startUnloadingAt, '%Y-%m-%d') as day, AVG(quantity-newQuantity) as avgLoss FROM deals WHERE status=4 AND companyId=" +
         companyId +
         " AND transporterId=" +
         transporterId +
@@ -199,7 +234,7 @@ router.get("/getAverageLossPerTrip/:cid/:tid/:unit", (req, res) => {
         year +
         " AND MONTH(startUnloadingAt)=" +
         month +
-        " GROUP BY DATE_FORMAT(startUnloadingAt, '%d')";
+        " GROUP BY DATE_FORMAT(startUnloadingAt, '%Y-%m-%d')";
   }
   console.log(query);
   db.query(query, function (error, results, fields) {
