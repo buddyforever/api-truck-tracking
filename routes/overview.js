@@ -19,6 +19,7 @@ router.get("/getLoginLogs/:cid/:uid", (req, res) => {
 });
 router.get("/getYearlyLoss/:cid", (req, res) => {
   var companyId = req.params.cid;
+  console.log(companyId);
   var query = "";
   if (companyId == 1)
     query =

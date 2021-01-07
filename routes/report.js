@@ -127,10 +127,10 @@ router.get("/getTruckDataHistory/:cid", (req, res) => {
   var query = "";
   if (companyId == 1)
     query =
-      "SELECT DATE_FORMAT(d.finishUnloadingAt, '%Y-%m-%d') as date, t.transporter, d.driverName, (d.netWeight-d.newNetWeight) as netLoss, d.finishLoadingAt-d.startLoadingAt as timeLoaded, d.startUnloadingAt-d.finishLoadingAt as timeArrived, d.finishUnloadingAt-d.startUnloadingAt as timeUnloaded FROM deals d LEFT JOIN transporters t ON d.transporterId=t.id WHERE d.status=4 AND d.companyId=1";
+      "SELECT DATE_FORMAT(d.finishUnloadingAt, '%Y-%m-%d') as date, t.transporter, d.driverName, (d.netWeight-d.newNetWeight) as netLoss, TIMESTAMPDIFF(SECOND, d.startLoadingAt, d.finishLoadingAt) as timeLoaded, TIMESTAMPDIFF(SECOND, d.finishLoadingAt, d.startUnloadingAt) as timeArrived, TIMESTAMPDIFF(SECOND, d.startUnloadingAt, d.finishUnloadingAt) as timeUnloaded FROM deals d LEFT JOIN transporters t ON d.transporterId=t.id WHERE d.status=4 AND d.companyId=1";
   else if (companyId == 2)
     query =
-      "SELECT DATE_FORMAT(d.finishUnloadingAt, '%Y-%m-%d') as date, t.transporter, d.driverName, (d.quantity-d.newQuantity) as netLoss, d.finishLoadingAt-d.startLoadingAt as timeLoaded, d.startUnloadingAt-d.finishLoadingAt as timeArrived, d.finishUnloadingAt-d.startUnloadingAt as timeUnloaded FROM deals d LEFT JOIN transporters t ON d.transporterId=t.id WHERE d.status=4 AND d.companyId=2";
+      "SELECT DATE_FORMAT(d.finishUnloadingAt, '%Y-%m-%d') as date, t.transporter, d.driverName, (d.quantity-d.newQuantity) as netLoss, TIMESTAMPDIFF(SECOND, d.startLoadingAt, d.finishLoadingAt) as timeLoaded, TIMESTAMPDIFF(SECOND, d.finishLoadingAt, d.startUnloadingAt) as timeArrived, TIMESTAMPDIFF(SECOND, d.startUnloadingAt, d.finishUnloadingAt) as timeUnloaded FROM deals d LEFT JOIN transporters t ON d.transporterId=t.id WHERE d.status=4 AND d.companyId=2";
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     res.send({
