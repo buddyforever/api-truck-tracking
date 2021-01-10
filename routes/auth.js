@@ -22,48 +22,47 @@ router.post("/signin", (req, res) => {
     dt.getMinutes() +
     ":" +
     dt.getSeconds();
-  db.query(
+  var query =
     "SELECT * FROM users WHERE email='" +
-      user.email +
-      "' AND password='" +
-      user.password +
-      "' AND status=1",
-    function (error, results, fields) {
-      if (error) throw error;
-      if (results.length) {
-        let user = results[0];
-        var query =
-          "UPDATE users SET last_login='" + now + "' WHERE id=" + results[0].id;
-        db.query(query, function (error, results1, fields) {
-          if (error) throw error;
-          db.query(
-            "INSERT INTO users_login (userId, ip_address, login_at) VALUES (" +
-              results[0].id +
-              ", '" +
-              user.ip_address +
-              "', '" +
-              now +
-              "')",
-            function (error, results2, fields) {
-              if (error) throw error;
-              res.send({ status: 200, result: results });
-            }
-          );
-          // if (user.type != 1) { // save user login to notifications table
-          //   db.query(
-          //     "INSERT INTO notifications (userId, notification, type, status, created_at) VALUES (" +
-          //       user.id +
-          //       ", 'currently login...', 2, 0, '" +
-          //       now +
-          //       "')",
-          //     function (error, result3, field) {
-          //       if (error) throw error;
-          //     }
-          //   );
-          // }
-        });
-      } else res.send({ status: 404 });
-    }
-  );
+    user.email +
+    "' AND password='" +
+    user.password +
+    "' AND status=1";
+  db.query(query, function (error, results, fields) {
+    if (error) throw error;
+    if (results.length) {
+      let user = results[0];
+      query =
+        "UPDATE users SET last_login='" + now + "' WHERE id=" + results[0].id;
+      db.query(query, function (error, results1, fields) {
+        if (error) throw error;
+        db.query(
+          "INSERT INTO users_login (userId, ip_address, login_at) VALUES (" +
+            results[0].id +
+            ", '" +
+            user.ip_address +
+            "', '" +
+            now +
+            "')",
+          function (error, results2, fields) {
+            if (error) throw error;
+            res.send({ status: 200, result: results });
+          }
+        );
+        // if (user.type != 1) { // save user login to notifications table
+        //   db.query(
+        //     "INSERT INTO notifications (userId, notification, type, status, created_at) VALUES (" +
+        //       user.id +
+        //       ", 'currently login...', 2, 0, '" +
+        //       now +
+        //       "')",
+        //     function (error, result3, field) {
+        //       if (error) throw error;
+        //     }
+        //   );
+        // }
+      });
+    } else res.send({ status: 404 });
+  });
 });
 module.exports = router;
