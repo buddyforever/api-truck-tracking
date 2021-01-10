@@ -41,6 +41,8 @@ router.post("/add", (req, res) => {
     firstWeight: req.body.firstWeight,
     secondWeight: req.body.secondWeight,
     netWeight: req.body.netWeight,
+    newFirstWeight: req.body.newFirstWeight,
+    newSecondWeight: req.body.newSecondWeight,
     newNetWeight: req.body.newNetWeight,
     quantity: req.body.quantity,
     newQuantity: req.body.newQuantity,
@@ -53,7 +55,7 @@ router.post("/add", (req, res) => {
     status: 1,
   };
   var query =
-    "INSERT INTO deals (companyId, driverName, driverPhone, truckPlate, trailerPlate, secondPlate, transporterId, productId, firstWeight, secondWeight, netWeight, newNetWeight, quantity, newQuantity, alertTime, borderNumber, receiptNumber, description, newDescription, startLoadingAt, status) VALUES (" +
+    "INSERT INTO deals (companyId, driverName, driverPhone, truckPlate, trailerPlate, secondPlate, transporterId, productId, firstWeight, secondWeight, netWeight, newFirstWeight, newSecondWeight, newNetWeight, quantity, newQuantity, alertTime, borderNumber, receiptNumber, description, newDescription, startLoadingAt, status) VALUES (" +
     deal.companyId +
     ", '" +
     deal.driverName +
@@ -75,6 +77,10 @@ router.post("/add", (req, res) => {
     deal.secondWeight +
     ", " +
     deal.netWeight +
+    ", " +
+    deal.newFirstWeight +
+    ", " +
+    deal.newSecondWeight +
     ", " +
     deal.newNetWeight +
     ", " +
@@ -154,6 +160,8 @@ router.post("/update", (req, res) => {
     firstWeight: req.body.firstWeight,
     secondWeight: req.body.secondWeight,
     netWeight: req.body.netWeight,
+    newFirstWeight: req.body.newFirstWeight,
+    newSecondWeight: req.body.newSecondWeight,
     newNetWeight: req.body.newNetWeight,
     quantity: req.body.quantity,
     newQuantity: req.body.newQuantity,
@@ -192,6 +200,10 @@ router.post("/update", (req, res) => {
     deal.secondWeight +
     ", netWeight=" +
     deal.netWeight +
+    ", newFirstWeight=" +
+    deal.newFirstWeight +
+    ", newSecondWeight=" +
+    deal.newSecondWeight +
     ", newNetWeight=" +
     deal.newNetWeight +
     ", quantity=" +
