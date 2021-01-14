@@ -37,7 +37,6 @@ router.post("/add", (req, res) => {
     password: req.body.password,
     created_at: now,
   };
-  console.log(user);
   var query =
     "INSERT INTO users (firstname, lastname, email, phone, password, companyId, type, status, created_at) VALUES ('" +
     user.firstname +
@@ -128,7 +127,6 @@ router.post("/update", (req, res) => {
 });
 router.post("/delete/:id", (req, res) => {
   var userId = req.params.id;
-  console.log(userId);
   var query = "DELETE FROM users WHERE id=" + userId;
   db.query(query, function (error, results, fields) {
     if (error) throw error;

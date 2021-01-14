@@ -113,7 +113,6 @@ router.get("/getMonthlyNetLoss/:cid/:unit", (req, res) => {
         month +
         " GROUP BY DATE_FORMAT(startUnloadingAt, '%Y-%m-%d')";
   }
-  console.log(query);
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     res.send({
@@ -236,7 +235,6 @@ router.get("/getAverageLossPerTrip/:cid/:tid/:unit", (req, res) => {
         month +
         " GROUP BY DATE_FORMAT(startUnloadingAt, '%Y-%m-%d')";
   }
-  console.log(query);
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     res.send({

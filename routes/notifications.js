@@ -26,7 +26,6 @@ router.post("/markAllAsRead", (req, res) => {
     "UPDATE notifications SET status=1 WHERE status=0",
     function (error, results, fields) {
       if (error) throw error;
-      console.log(results);
       if (results.affectedRows) {
         db.query(
           "SELECT u.*, n.*, n.id as id, n.status as status, n.created_at as created_at FROM notifications n JOIN users u ON u.id=n.userId ORDER BY n.created_at DESC",
