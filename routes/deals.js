@@ -5,7 +5,7 @@ var db = require("../db");
 
 router.get("/get", (req, res) => {
   var query =
-    "SELECT *, deals.id as id, deals.companyId as companyId FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id";
+    "SELECT *, deals.id as id, deals.companyId as companyId FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id ORDER BY deals.startLoadingAt ASC";
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     if (results.length > 0) res.send({ status: 200, result: results });
@@ -120,7 +120,7 @@ router.post("/add", (req, res) => {
         if (error) throw error;
       });
       db.query(
-        "SELECT *, deals.id as id, deals.companyId as companyId FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id",
+        "SELECT *, deals.id as id, deals.companyId as companyId FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id ORDER BY deals.startLoadingAt ASC",
         function (error, results, fields) {
           if (error) throw error;
           res.send({ status: 200, result: results });
@@ -278,7 +278,7 @@ router.post("/update", (req, res) => {
       }
     }
     db.query(
-      "SELECT *, deals.id as id, deals.companyId as companyId FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id",
+      "SELECT *, deals.id as id, deals.companyId as companyId FROM deals LEFT JOIN transporters ON deals.transporterId=transporters.id LEFT JOIN products ON deals.productId=products.id ORDER BY deals.startLoadingAt ASC",
       function (error, results, fields) {
         if (error) throw error;
         res.send({ status: 200, result: results });
