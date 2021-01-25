@@ -31,24 +31,22 @@ router.post("/signin", (req, res) => {
   db.query(query, function (error, results, fields) {
     if (error) throw error;
     if (results.length) {
-      let user = results[0];
       query =
         "UPDATE users SET last_login='" + now + "' WHERE id=" + results[0].id;
       db.query(query, function (error, results1, fields) {
         if (error) throw error;
-        db.query(
+        query =
           "INSERT INTO users_login (userId, ip_address, login_at) VALUES (" +
-            results[0].id +
-            ", '" +
-            user.ip_address +
-            "', '" +
-            now +
-            "')",
-          function (error, results2, fields) {
-            if (error) throw error;
-            res.send({ status: 200, result: results });
-          }
-        );
+          results[0].id +
+          ", '" +
+          user.ip_address +
+          "', '" +
+          now +
+          "')";
+        db.query(query, function (error, results2, fields) {
+          if (error) throw error;
+          res.send({ status: 200, result: results });
+        });
         // if (user.type != 1) { // save user login to notifications table
         //   db.query(
         //     "INSERT INTO notifications (userId, notification, type, status, created_at) VALUES (" +
